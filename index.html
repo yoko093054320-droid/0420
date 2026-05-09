@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔戒書評系統 - 自學網站設計</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. 書籍展示卡片 -->
+    <div class="book-card">
+        <img src="getImage.webp" alt="書本封面" class="book-cover">
+        <div class="book-info">
+            <h1>魔戒</h1>
+            <p class="author">作者: J·R·R·托爾金 (J. R. R. Tolkien)</p>
+            <div class="start">★★★★★</div>
+            <p class="review-text">全書有如史詩般的劇情，且書中的世界真的很吸引人</p>
+        </div>
+        <!-- 修改後的按鈕：具備切換過往評論的功能 -->
+        <button id="show-more-btn" class="btn">查看更多評論</button>
+    </div>
+
+    <!-- 2. 過往評論顯示區塊 (預設隱藏) -->
+    <div id="display-reviews" style="display: none; margin-top: 20px; max-width: 350px; margin-left: auto; margin-right: auto; background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px dashed #ccc;">
+        <h3 style="text-align: center;">過往評論</h3>
+        <div id="reviews-list"></div>
+    </div>
+
+    <!-- 3. 新增評論表單 -->
+    <div class="comment-form">
+        <h2 id="comment-area">新增我的評論</h2>
+        <input type="text" id="reviewer-name" name="nickname" placeholder="你的暱稱">
+        <select id="rating" name="rating">
+            <option value="5">★★★★★ (5星)</option>
+            <option value="4">★★★★☆ (4星)</option>
+            <option value="3">★★★☆☆ (3星)</option>
+            <option value="2">★★☆☆☆ (2星)</option>
+            <option value="1">★☆☆☆☆ (1星)</option>
+        </select>
+        <textarea id="comment-text" name="content" placeholder="寫下你對這本書的看法..."></textarea>
+        
+        <button id="submit-btn" class="btn">發佈評論</button>
+    </div>
+
+    <!-- 4. JavaScript 邏輯控制 -->
+    <script>
+        // 頁面載入後，先從 LocalStorage 讀取一次資料
+        window.onload = function() {
+            displaySavedReviews();
+        };
+
+        // 功能 A: 控制「查看更多評論」按鈕的開關
+        document.getElementById('show-more-btn').onclick = function() {
+            const reviewSection = document.getElementById('display-reviews');
+            
+            if (reviewSection.style.display === "none" || reviewSection.style.display === "") {
+                reviewSection.style.display = "block"; // 顯示
+                this.innerText = "收起評論";           // 改變按鈕文字
+            } else {
+                reviewSection.style.display = "none";  // 隱藏
+                this.innerText = "查看更多評論";       // 恢復文字
+            }
+        };
+
+        // 功能 B: 處理發佈評論按鈕點擊
+        document.getElementById('submit-btn').onclick = function() {
+            const name = document.getElementById('reviewer-name').value;
+            const rating = document.getElementById('rating').value;
+            const text = document.getElementById('comment-text').value;
+
+            if (!name || !text) {
+                alert("請填寫暱稱與內容！");
+                return;
+            }
+
+            const newReview = { 
+                name: name, 
+                rating: rating, 
+                text: text, 
+                date: new Date().toLocaleString() 
+            };
+
+            // 儲存資料到瀏覽器 (LocalStorage)
+            let reviews = JSON.parse(localStorage.getItem('bookReviews')) || [];
+            reviews.push(newReview);
+            localStorage.setItem('bookReviews', JSON.stringify(reviews));
+
+            alert(name + "，您的評論已送出！");
+            
+            displaySavedReviews(); // 更新顯示列表
+            
+            // 清空輸入框內容
+            document.getElementById('reviewer-name').value = "";
+            document.getElementById('comment-text').value = "";
+        };
+
+        // 功能 C: 渲染評論列表到網頁上
+        function displaySavedReviews() {
+            const list = document.getElementById('reviews-list');
+            const reviews = JSON.parse(localStorage.getItem('bookReviews')) || [];
+            
+            if (reviews.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#999;'>目前尚無評論</p>";
+                return;
+            }
+
+            list.innerHTML = reviews.map(r => `
+                <div style="border-bottom: 1px solid #ddd; padding: 10px; background: #fff; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <strong>${r.name}</strong> (${r.rating}星) <br>
+                    <small style="color: #888;">${r.date}</small>
+                    <p style="margin-top: 5px; color: #333;">${r.text}</p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
