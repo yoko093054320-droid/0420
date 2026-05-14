@@ -19,7 +19,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     display: flex;
-    flex-direction: column; /* 讓輸入框一個接一個往下排 */
+    flex-direction: column; 
     gap: 10px;
 }
 #display-reviews {
@@ -39,7 +39,7 @@ input, select, textarea {
 
 textarea {
     height: 100px;
-    resize: none; /* 防止使用者亂拉大小破壞版面 */
+    resize: none; 
 }
 .stars { color: #f1c40f; font-size: 1.2rem; }
 .btn { background: #3498db; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
